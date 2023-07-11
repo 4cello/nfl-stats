@@ -7,8 +7,9 @@ import helpers
 df_pbp = None
 df_pt = None
 
-rows = [{"team": ["CLE", "CLV"]}, {"team": ["LV","OAK"]}, {"td_from": "00-0020531"}]
-cols = [{"team": "MIA"}, {"team": "NE"}, {"team": "BAL"}]
+rows = [{"team": "LA"}, {"team": "JAX"}, {"college": "Alabama"}]
+cols = [{"team": "ATL"}, {"team": "ARI"}, {"team": "DAL"}]
+years = range(1999,2023)
 
 def on_team(team):
     if isinstance(team, str):
@@ -45,13 +46,20 @@ def filter_players(entry):
 
 def main():
     global df_pbp, df_pt
-    df_pbp = helpers.import_pbp_data(years=range(2017,2023), columns=["play_id", "game_id", "touchdown", "play_type", "passer_player_id", "td_player_id"])
+    df_pbp = helpers.import_pbp_data(years=years, columns=["play_id", "game_id", "touchdown", "play_type", "passer_player_id", "td_player_id"])
     print("pbp done")
-    df_players = nfl.import_rosters(years=range(2015,2023))
+    df_players = nfl.import_rosters(years=years)
     print("rosters done")
     unique_players = df_players[["player_id", "player_name"]].drop_duplicates(subset=["player_id"])
 
-    df_pt = df_players.groupby("player_id").agg({"team": lambda x: list(set(x)), "college": lambda x: list(set(x))})
+    df_pt = df_players.groupby("player_id").agg({
+        "team": lambda x: list(set(x)),
+        "college": lambda x: list(set(x)),
+        "years_exp": "max",
+        #"rookie_year": "max",
+        #"draft_number": "max",
+        "draft_club": lambda x: list(set(x))
+    })
 
     grid_rows = [filter_players(entry) for entry in rows]
     grid_cols = [filter_players(entry) for entry in cols]
