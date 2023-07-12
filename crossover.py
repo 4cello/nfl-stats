@@ -91,10 +91,9 @@ class CrossoverNFLSolver:
                 intersect = prow.merge(
                     pcol, how="inner", on=["player_id"], suffixes=[None, "_right"]
                 )
+                df_names = intersect.merge(unique_players, on=["player_id"])
                 squarename = f"{self.filter_str(row)}/{self.filter_str(col)}"
-                grid[squarename] = intersect.merge(unique_players, on=["player_id"])[
-                    "player_name"
-                ].to_list()
+                grid[squarename] = df_names["player_name"].to_list()
 
         return grid
 
