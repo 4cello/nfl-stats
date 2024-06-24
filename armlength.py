@@ -99,18 +99,5 @@ class CrossoverNFLSolver:
 
 
 if __name__ == "__main__":
-    rows = [{"team": "KC"}, {"team": "CIN"}, {"college": "Alabama"}]
-    cols = [{"team": "IND"}, {"team": "LV"}, {"team": "NYJ"}]
-    years = range(1999, 2023)
-
-    grid = CrossoverNFLSolver().find_candidates(rows, cols, years)
-
-    max_list_len = max([len(players) for players in grid.values()])
-
-    table = PrettyTable()
-    for square, players in grid.items():
-        table.add_column(square, sorted(players) + [""] * (max_list_len - len(players)))
-    table.align = "l"
-    table.set_style(MARKDOWN)
-
-    print(table)
+    df_combine = nfl.import_combine_data(years=[2023], positions=["WR"])
+    print(df_combine)
